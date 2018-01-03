@@ -4,4 +4,5 @@
 # @author: x.huang
 # @date:17-8-16
 
-from .base import *
+
+from .user_admin import *
