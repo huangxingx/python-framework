@@ -1,8 +1,8 @@
 ## python-framework ##
-python 后端框架代码
+
 
 ### 环境要求 ###
-* python 2.7.*
+* python 3.6.x
 * ubuntu 14.04
 
 ### 初始化项目 ###

@@ -1,0 +1,16 @@
+tornado==4.5.2
+pycket==0.3.0
+six==1.10.0
+redis==2.10.5
+pony==0.7.2
+pymysql==0.7.11
+WTForms==2.1
+PyCrypto==2.6.1
+tornado-redis==2.4.18
+pycurl==7.43.0
+oss2==2.3.3
+
+celery==3.1.18
+tornado-celery==0.3.5
+pika==0.9.14
+Pillow==4.3.0

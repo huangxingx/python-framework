@@ -5,7 +5,12 @@
 # @date:17-8-2
 import json
 import os
-import ConfigParser
+import six
+
+if six.PY3:
+    from configparser import ConfigParser
+else:
+    from ConfigParser import ConfigParser
 
 cur_dir = os.path.dirname(__file__)
 project_dir = os.path.realpath(os.path.dirname(cur_dir))
@@ -15,11 +20,11 @@ config_dir = os.path.join(project_dir, 'config')
 class ConfigIni(object):
     def __init__(self):
         self._conf_name = ''
-        self.cf_obj = ConfigParser.ConfigParser()
+        self.cf_obj = ConfigParser()
 
     def read(self):
         if not self._conf_name:
-            raise StandardError('Please call set_conf_name function.')
+            raise Exception('Please call set_conf_name function.')
 
         if not os.path.exists(self.conf_path):
             raise IOError('config file don`t exists: {}'.format(self.conf_path))
@@ -41,9 +46,10 @@ class ConfigIni(object):
 
         ret_dict = dict()
         for sec in self.cf_obj.sections():
+            ret_dict[sec] = {}
             for key, val in self.cf_obj.items(sec):
-                ret_dict[key] = val
-        return json.dumps(ret_dict)
+                ret_dict[sec][key] = val
+        return ret_dict
 
     def load(self):
         return self._load_to_json()
@@ -77,4 +83,4 @@ def get_config_by_name(config_name):
 
 if __name__ == '__main__':
     log_conf_dict = get_config_by_name('db')
-    print log_conf_dict
+    print(log_conf_dict)
