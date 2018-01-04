@@ -6,9 +6,11 @@
 
 from datetime import datetime
 
+from pony.orm import *
+
 from libs.crypto import encrypto
 from models.base import db, BaseModel
-from pony.orm import *
+from utils.validate import valid_password
 
 
 class RoleModel(BaseModel, db.Entity):
@@ -47,7 +49,7 @@ class UserAdminModel(BaseModel, UserMixin, db.Entity):
 
     id = PrimaryKey(int, auto=True)
     username = Required(str, 10)
-    password = Required(str, 255)
+    password = Required(str, 255, py_check=valid_password)
     role_id = Optional(RoleModel, nullable=True)
     is_supper = Required(bool, default=0, sql_default='0')
     is_active = Required(bool, default=1, sql_default='1')

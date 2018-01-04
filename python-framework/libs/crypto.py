@@ -9,8 +9,10 @@ from Crypto.Hash import MD5
 
 
 def encrypto(val):
-    m = MD5.new('pettyloan')
-    m.update(val)
+    # python3 需要把进行 encode
+    # todo 更改项目加密 key
+    m = MD5.new('python-framework'.encode('utf-8'))
+    m.update(val.encode('utf-8'))
     return m.hexdigest()
 
 
@@ -19,4 +21,4 @@ def decrypto(val):
 
 
 if __name__ == '__main__':
-    print(encrypto('huangxing'))
+    print(encrypto('arhieason'))

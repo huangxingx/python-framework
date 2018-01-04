@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import redis
 # @author: x.huang
 # @date:17-8-11
 import tornadoredis
 from pony.orm import Database, sql_debug
-import redis
 
 import setting
 

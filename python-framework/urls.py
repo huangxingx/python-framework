@@ -6,7 +6,7 @@
 
 import os
 
-from handlers import api, admin, web
+from handlers import api
 
 media_pic_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'media/pic')
 

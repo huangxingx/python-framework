@@ -4,36 +4,29 @@
 # @author: x.huang
 # @date:17-8-11
 
+from abc import abstractmethod
 
-class BaseService(object):
+from libs.util import AbstractBase
+
+
+class BaseService(AbstractBase):
+    @abstractmethod
     def insert(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def update(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def delete(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
     def get_by_pk(self, pk):
         pass
 
+    def get_all(self, *args, **kwargs):
+        pass
 
-class ServiceError(Exception):
-    pass
-
-
-class GetError(ServiceError):
-    pass
-
-
-class InsertError(ServiceError):
-    pass
-
-
-class UpdateError(ServiceError):
-    pass
-
-
-class DeleteError(ServiceError):
-    pass
+    def get(self, *args, **kwargs):
+        pass

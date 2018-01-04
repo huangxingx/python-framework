@@ -25,3 +25,9 @@ class BaseModel(object):
             exclude = 'is_delete'
         return super(BaseModel, self).to_dict(only=only, exclude=exclude, with_collections=with_collections,
                                               with_lazy=with_lazy, related_objects=related_objects)
+
+    @classmethod
+    def get(cls, *args, **kwargs):
+        if kwargs.get('is_delete') is None:
+            kwargs['is_delete'] = False
+        return super(BaseModel, cls).get(*args, **kwargs)

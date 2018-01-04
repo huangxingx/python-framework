@@ -9,7 +9,6 @@ import logging
 from pony.orm import db_session
 
 from handlers.base.base import BaseRequestHandler
-from utils.security_code import generator_security_code_key
 
 
 class LoginRequireError(Exception):

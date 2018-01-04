@@ -3,8 +3,8 @@
 
 # @author: x.huang
 # @date:17-8-2
-import json
 import os
+
 import six
 
 if six.PY3:

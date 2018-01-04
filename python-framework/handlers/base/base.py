@@ -5,13 +5,13 @@
 # @date:17-8-4
 import json
 import logging
-import re
 import traceback
 
 from pycket.session import SessionMixin
 from tornado import gen
 from tornado import web
 
+import setting
 from handlers.base.mixin import *
 from libs.http_status_code import *
 from libs.util import DatetimeJSONEncoder
@@ -91,12 +91,26 @@ def exception_callback(msg):
     logging.error(traceback.print_exc())
 
 
+def ensure_int_or_default(num, default=0, is_abs=False):
+    try:
+        new_num = int(num)
+        if is_abs:
+            return abs(new_num)
+        return new_num
+    except ValueError:
+        return default
+
+
 class BaseRequestHandler(web.RequestHandler, RenderHandlerMixin, SessionMixin, ServiceMixin, ModelMixin):
     """ 所有 Handler 的基类 """
+    DEFAULT_PAGE_SIZE = 20
+    DEFAULT_PAGE = 0
 
     def __init__(self, *args, **kwargs):
         super(BaseRequestHandler, self).__init__(*args, **kwargs)
         self.request.json = {}
+        self.page = 0
+        self.page_size = 0
 
     def prepare(self):
         """ 处理 application/json 格式数据， 解析到 self.request.body 中 """
@@ -115,6 +129,12 @@ class BaseRequestHandler(web.RequestHandler, RenderHandlerMixin, SessionMixin, S
     @gen.coroutine
     def get(self, *args, **kwargs):
         try:
+            self.page = ensure_int_or_default(self.get_argument('page', BaseRequestHandler.DEFAULT_PAGE),
+                                              default=BaseRequestHandler.DEFAULT_PAGE, is_abs=True)
+            _setting_or_default_page_size = getattr(setting, 'PAGE_SIZE') or BaseRequestHandler.DEFAULT_PAGE_SIZE
+
+            self.page_size = ensure_int_or_default(self.get_argument('page_size', _setting_or_default_page_size),
+                                                   default=_setting_or_default_page_size, is_abs=True)
             yield self._get(*args, **kwargs)
         except Exception as e:
             exception_callback(e)

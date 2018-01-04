@@ -8,8 +8,9 @@
 from __future__ import absolute_import, division, with_statement
 
 import datetime
-import json
 import decimal
+import json
+from abc import ABCMeta
 
 
 class ObjectDict(dict):
@@ -48,3 +49,7 @@ class DatetimeJSONEncoder(json.JSONEncoder):
             return float(obj)
         else:
             return super(self, DatetimeJSONEncoder).default(obj)
+
+
+class AbstractBase(object):
+    __metaclass__ = ABCMeta

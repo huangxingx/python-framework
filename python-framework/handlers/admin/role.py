@@ -10,10 +10,10 @@ from pony.orm import MultipleObjectsFoundError
 from tornado import gen
 
 from constants.permission import PAGE_CHANNEL_URL_PATTERN
-from setting import PAGE_SIZE
-from utils.permission import parse_permission
 from handlers.admin.base import AdminAuthHandler, AdminHandler
 from libs.http_status_code import *
+from setting import PAGE_SIZE
+from utils.permission import parse_permission
 
 
 class RoleHandler(AdminAuthHandler):

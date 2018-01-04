@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import random
-
 import datetime
+import random
 import time
 
 from constants.cache_key import PRE_SECURITY_CODE, PRE_PHONE_COUNT, ONE_DAY

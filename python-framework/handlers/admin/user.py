@@ -5,7 +5,6 @@
 # @date:18-1-3
 
 import json
-import logging
 
 from pony.orm import MultipleObjectsFoundError, PermissionError
 from tornado import gen
@@ -13,9 +12,9 @@ from tornado import gen
 from handlers.admin.base import AdminAuthHandler
 from handlers.admin.base import AdminHandler
 from handlers.base.auth import Authentication
+from libs.http_status_code import *
 from libs.util import DatetimeJSONEncoder
 from setting import PAGE_SIZE
-from libs.http_status_code import *
 
 
 class UserAdminHandler(AdminAuthHandler):
@@ -40,7 +39,7 @@ class UserAdminHandler(AdminAuthHandler):
         if isinstance(useradmin_ids, list):
             msg = yield self.s_useradmin.delete(useradmin_ids)
             self.render_success(msg)
-        elif isinstance(useradmin_ids, unicode):
+        elif isinstance(useradmin_ids, str):
             ids_list = useradmin_ids.split(',')
             msg = yield self.s_useradmin.delete(ids_list)
             self.render_success(msg)
