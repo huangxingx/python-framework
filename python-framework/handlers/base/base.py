@@ -12,6 +12,7 @@ from tornado import gen
 from tornado import web
 
 import setting
+from bexceptions import BException
 from handlers.base.mixin import *
 from libs.http_status_code import *
 from libs.util import DatetimeJSONEncoder
@@ -21,6 +22,25 @@ app_log = logging.getLogger("tornado.application")
 
 class MethodNotImplError(web.HTTPError):
     pass
+
+
+class YXException(BException):
+
+    def __init__(self, error_code=0, error_msg=''):
+        self.error_code = error_code
+        self.error_msg = error_msg
+
+
+class JsonParaMissError(YXException):
+    def __init__(self, arg_name):
+        self.error_msg = 'JsonParaMissError: {} Miss Error'.format(arg_name)
+        self.error_code = 400
+
+
+class JsonParaTypeError(YXException):
+    def __init__(self, arg_name, old_type, new_type):
+        self.error_msg = 'JsonParaTypeError: {} Must Be {}, but accept a {}.'.format(arg_name, old_type, new_type)
+        self.error_code = 400
 
 
 class RenderHandlerMixin(object):
@@ -125,6 +145,52 @@ class BaseRequestHandler(web.RequestHandler, RenderHandlerMixin, SessionMixin, S
         except Exception as e:
             self.render_error(str(e), status_code=HTTP_400_BAD_REQUEST)
             return
+
+    _JSON_DATA_ARG_DEFAULT = object()
+
+    def get_json_data(self, name, default=_JSON_DATA_ARG_DEFAULT, arg_type=None):
+        """ 获取 json 数据方法，提供默认值，类型检查
+
+        :param str, name: 参数字段名称.
+        :param any, default: 参数默认值，可选参数需要填写默认值.
+        :param tuple|object, arg_type: 参数类型.
+        :return: object, 参数值
+        :raises: ValueError, request method 不是 put or post.
+        :raises: TypeError, default and arg_type 类型不一致.
+        :raises: JsonParaMissError, 必填参数缺少.
+        :raises: JsonParaTypeError, 参数类型不对.
+        """
+
+        def _check_arg_type(check_data):
+            if isinstance(check_data, arg_type):
+                return check_data
+            raise JsonParaTypeError(name, arg_type, type(check_data))
+
+        def _check_default_value(check_name):
+            if default is self._JSON_DATA_ARG_DEFAULT:
+                ret_data = self.request.json.get(check_name, self._JSON_DATA_ARG_DEFAULT)
+                if ret_data is self._JSON_DATA_ARG_DEFAULT:
+                    raise JsonParaMissError(check_name)
+            else:
+                ret_data = self.request.json.get(check_name, default)
+            return ret_data
+
+        if self.request.method not in ['PUT', 'POST']:
+            # developer
+            raise ValueError('call get_json_data function must be put or post method, not %s.' % self.request.method)
+
+        if default is not self._JSON_DATA_ARG_DEFAULT and arg_type is not None:
+            if not isinstance(default, arg_type):
+                raise TypeError('all get_json_data function para "%s" default value must be arg_type instance.' % name)
+
+        if not self.request.json:
+            if default is self._JSON_DATA_ARG_DEFAULT:
+                raise JsonParaMissError(name)
+        else:
+            data = _check_default_value(name)
+            if arg_type is not None:
+                return _check_arg_type(data)
+            return data
 
     @gen.coroutine
     def get(self, *args, **kwargs):
